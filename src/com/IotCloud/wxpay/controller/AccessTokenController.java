@@ -24,10 +24,14 @@ public class AccessTokenController {
 		Map<String, Object> res = new HashMap<String, Object>();
 		AccessTokenService accessTokenService = new AccessTokenService(request, response);
 		String token = "";
-		if (accessTokenService.isRequestValid()) {
-			token = accessTokenService.getAccessToken();
+		try {
+			if (accessTokenService.isRequestValid()) {
+				token = accessTokenService.getAccessToken();
+			}
+			res.put("token", token);
+		}catch(Exception e){
+			e.printStackTrace();
 		}
-		res.put("token", token);
 		return res;
 	}
 
@@ -68,11 +72,14 @@ public class AccessTokenController {
 		orderQueryService.setTransactionId("1008450740201411110005820873");
 		orderQueryService.setSign("FDD167FAA73459FD921B144BAF4F4CA2");
 		System.out.println(orderQueryService.getDebugInfo());
-		
-		if(orderQueryService.isRequestValid()) {
-			orderInfo = orderQueryService.getOrderInfo();
+		try {
+			if(orderQueryService.isRequestValid()) {
+				orderInfo = orderQueryService.getOrderInfo();
+			}
+			res.put("orderInfo", orderInfo);
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
-		res.put("orderInfo", orderInfo);
 		return res;
 	}
 }

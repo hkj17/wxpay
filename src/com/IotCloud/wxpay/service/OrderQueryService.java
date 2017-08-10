@@ -9,6 +9,7 @@ import com.IotCloud.wxpay.client.TenpayHttpClient;
 import com.IotCloud.wxpay.constant.ParameterKeys;
 import com.IotCloud.wxpay.constant.ParameterValues;
 import com.IotCloud.wxpay.util.CommonUtil;
+import com.IotCloud.wxpay.util.ResponseHandler;
 
 public class OrderQueryService extends RequestHandler {
 
@@ -38,7 +39,7 @@ public class OrderQueryService extends RequestHandler {
 		super.setParameter(ParameterKeys.TRANSACTION_ID, transactionId);
 	}
 	
-	public String getOrderInfo() {
+	public String getOrderInfo() throws Exception {
 		String xml = super.getXmlBody();
 		System.out.println(xml);
 		TenpayHttpClient httpClient = new TenpayHttpClient();
@@ -46,8 +47,12 @@ public class OrderQueryService extends RequestHandler {
 		String resContent = "";
 		if (httpClient.callHttpPost(requestUrl, xml)) {
 			resContent = httpClient.getResContent();
+			ResponseHandler responseHandler = new ResponseHandler(resContent, 1);
+			responseHandler.getAllParameters();
+			return responseHandler.getAllParamValues();
+		}else {
+			return "";
 		}
-		return resContent;
 	}
 
 	@Override

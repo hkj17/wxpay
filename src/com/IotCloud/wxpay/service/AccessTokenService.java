@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.IotCloud.wxpay.client.TenpayHttpClient;
 import com.IotCloud.wxpay.constant.ParameterKeys;
 import com.IotCloud.wxpay.constant.ParameterValues;
-import com.IotCloud.wxpay.util.JsonUtil;
+import com.IotCloud.wxpay.util.ResponseHandler;
 
 public class AccessTokenService extends RequestHandler {
 
@@ -25,8 +25,9 @@ public class AccessTokenService extends RequestHandler {
 	 * 获取凭证access_token
 	 * 
 	 * @return
+	 * @throws Exception 
 	 */
-	public String getAccessToken() {
+	public String getAccessToken() throws Exception {
 		if ("".equals(access_token)) {// 如果为空直接获取
 			return getTokenReal();
 		}
@@ -38,8 +39,9 @@ public class AccessTokenService extends RequestHandler {
 	 * 实际获取access_token的方法
 	 * 
 	 * @return
+	 * @throws Exception 
 	 */
-	protected String getTokenReal() {
+	protected String getTokenReal() throws Exception {
 		requestUrl = requestUrl.replaceFirst("APPID", super.getParameter(ParameterKeys.APP_ID));
 		requestUrl = requestUrl.replaceFirst("APPSECRET", super.getParameter(ParameterKeys.APP_SECRET));
 		String resContent = "";
@@ -48,8 +50,10 @@ public class AccessTokenService extends RequestHandler {
 		httpClient.setReqContent(requestUrl);
 		if (httpClient.call()) {
 			resContent = httpClient.getResContent();
+			ResponseHandler responseHandler = new ResponseHandler(resContent, 0);
+			responseHandler.getAllParameters();
 			if (resContent.indexOf(ParameterKeys.ACCESS_TOKEN) > 0) {
-				access_token = JsonUtil.getJsonValue(resContent, ParameterKeys.ACCESS_TOKEN);
+				access_token = responseHandler.getParamValue(ParameterKeys.ACCESS_TOKEN);
 			} else {
 				System.out.println("获取access_token值返回错误！！！");
 			}
